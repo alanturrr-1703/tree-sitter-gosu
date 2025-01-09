@@ -391,6 +391,14 @@
     "named": false
   },
   {
+    "type": "==",
+    "named": false
+  },
+  {
+    "type": "===",
+    "named": false
+  },
+  {
     "type": "block_comment",
     "named": true
   },

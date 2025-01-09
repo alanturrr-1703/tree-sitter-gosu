@@ -228,9 +228,14 @@ module.exports = grammar({
 
     binary_expression: $ => prec.left(PREC.EXPRESSION, seq(
       $.expression,
-      choice('+', '-', '*', '/', '%'),
+      choice(
+        '+', '-', '*', '/', '%',  // Arithmetic operators
+        '==',                     // Object comparison
+        '===',                    // Strict object equality
+      ),
       $.expression
     )),
+    
 
     function_call: $ => seq(
       $.identifier,
