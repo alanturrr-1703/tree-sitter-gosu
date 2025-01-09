@@ -133,9 +133,6 @@ module.exports = grammar({
       )),
       '"""',
     ),
-    // Workaround to https://github.com/tree-sitter/tree-sitter/issues/1156
-    // We give names to the token() constructs containing a regexp
-    // so as to obtain a node in the CST.
 
     string_fragment: _ => token.immediate(prec(1, /[^"\\]+/)),
     _multiline_string_fragment: _ => choice(
