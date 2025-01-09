@@ -30,7 +30,7 @@ module.exports = grammar({
 
     header: $ => seq(
       $.package_declaration,
-      repeat($.import_statement)
+      repeat($.uses_statement)
     ),
 
     package_declaration: $ => seq(
@@ -39,8 +39,8 @@ module.exports = grammar({
       ';'
     ),
 
-    import_statement: $ => seq(
-      'import',
+    uses_statement: $ => seq(
+      'uses',
       $.qualified_identifier,
       ';'
     ),
