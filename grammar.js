@@ -1,10 +1,5 @@
-const DIGITS = token(choice(
-  '0', 
-  seq(/[1-9]/, optional(seq(optional('_'), sep1(/[0-9]+/, /_+/))))
-));
-
+const DIGITS = token(choice('0', seq(/[1-9]/, optional(seq(optional('_'), sep1(/[0-9]+/, /_+/))))));
 const DECIMAL_DIGITS = token(sep1(/[0-9]+/, '_'));
-
 const HEX_DIGITS = token(sep1(/[A-Fa-f0-9]+/, '_'));
 
 const PREC = {
@@ -44,6 +39,131 @@ module.exports = grammar({
       $.qualified_identifier,
       ';'
     ),
+
+    // Literals
+
+    _literal: $ => choice(
+      $.decimal_integer_literal,
+      $.hex_integer_literal,
+      $.octal_integer_literal,
+      $.binary_integer_literal,
+      $.decimal_floating_point_literal,
+      $.hex_floating_point_literal,
+      $.true,
+      $.false,
+      $.character_literal,
+      $.string_literal,
+      $.null_literal,
+    ),
+
+    decimal_integer_literal: _ => token(seq(
+      DIGITS,
+      optional(choice('l', 'L')),
+    )),
+
+    hex_integer_literal: _ => token(seq(
+      choice('0x', '0X'),
+      HEX_DIGITS,
+      optional(choice('l', 'L')),
+    )),
+
+    octal_integer_literal: _ => token(seq(
+      choice('0o', '0O', '0'),
+      sep1(/[0-7]+/, '_'),
+      optional(choice('l', 'L')),
+    )),
+
+    binary_integer_literal: _ => token(seq(
+      choice('0b', '0B'),
+      sep1(/[01]+/, '_'),
+      optional(choice('l', 'L')),
+    )),
+
+    decimal_floating_point_literal: _ => token(choice(
+      seq(DECIMAL_DIGITS, '.', optional(DECIMAL_DIGITS), optional(seq((/[eE]/), optional(choice('-', '+')), DECIMAL_DIGITS)), optional(/[fFdD]/)),
+      seq('.', DECIMAL_DIGITS, optional(seq((/[eE]/), optional(choice('-', '+')), DECIMAL_DIGITS)), optional(/[fFdD]/)),
+      seq(DIGITS, /[eE]/, optional(choice('-', '+')), DECIMAL_DIGITS, optional(/[fFdD]/)),
+      seq(DIGITS, optional(seq((/[eE]/), optional(choice('-', '+')), DECIMAL_DIGITS)), (/[fFdD]/)),
+    )),
+
+    hex_floating_point_literal: _ => token(seq(
+      choice('0x', '0X'),
+      choice(
+        seq(HEX_DIGITS, optional('.')),
+        seq(optional(HEX_DIGITS), '.', HEX_DIGITS),
+      ),
+      optional(seq(
+        /[pP]/,
+        optional(choice('-', '+')),
+        DIGITS,
+        optional(/[fFdD]/),
+      )),
+    )),
+
+    true: _ => 'true',
+
+    false: _ => 'false',
+
+    character_literal: _ => token(seq(
+      '\'',
+      repeat1(choice(
+        /[^\\'\n]/,
+        /\\./,
+        /\\\n/,
+      )),
+      '\'',
+    )),
+
+    string_literal: $ => choice($._string_literal, $._multiline_string_literal),
+    _string_literal: $ => seq(
+      '"',
+      repeat(choice(
+        $.string_fragment,
+        $.escape_sequence,
+        $.string_interpolation,
+      )),
+      '"',
+    ),
+    _multiline_string_literal: $ => seq(
+      '"""',
+      repeat(choice(
+        alias($._multiline_string_fragment, $.multiline_string_fragment),
+        $._escape_sequence,
+        $.string_interpolation,
+      )),
+      '"""',
+    ),
+    // Workaround to https://github.com/tree-sitter/tree-sitter/issues/1156
+    // We give names to the token() constructs containing a regexp
+    // so as to obtain a node in the CST.
+
+    string_fragment: _ => token.immediate(prec(1, /[^"\\]+/)),
+    _multiline_string_fragment: _ => choice(
+      /[^"\\]+/,
+      /"([^"\\]|\\")*/,
+    ),
+
+    string_interpolation: $ => seq(
+      '\\{',
+      $.expression,
+      '}',
+    ),
+
+    _escape_sequence: $ => choice(
+      prec(2, token.immediate(seq('\\', /[^bfnrts'\"\\]/))),
+      prec(1, $.escape_sequence),
+    ),
+    escape_sequence: _ => token.immediate(seq(
+      '\\',
+      choice(
+        /[^xu0-7]/,
+        /[0-7]{1,3}/,
+        /x[0-9a-fA-F]{2}/,
+        /u[0-9a-fA-F]{4}/,
+        /u\{[0-9a-fA-F]+\}/,
+      ))),
+
+    null_literal: _ => 'null',
 
     qualified_identifier: $ => prec.right(seq($.identifier, repeat(seq('.', $.identifier)))),
 
