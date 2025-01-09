@@ -1,3 +1,12 @@
+const DIGITS = token(choice(
+  '0', 
+  seq(/[1-9]/, optional(seq(optional('_'), sep1(/[0-9]+/, /_+/))))
+));
+
+const DECIMAL_DIGITS = token(sep1(/[0-9]+/, '_'));
+
+const HEX_DIGITS = token(sep1(/[A-Fa-f0-9]+/, '_'));
+
 const PREC = {
   COMMENT: 0,
   EXPRESSION: 1,
@@ -15,13 +24,13 @@ module.exports = grammar({
 
   rules: {
     source_file: $ => seq(
-      repeat1(seq($.header, '\n')),
-      repeat(choice($.statement, $.line_comment, $.block_comment, /\s/))
+      repeat($.header),
+      repeat($.statement)
     ),
 
     header: $ => seq(
       $.package_declaration,
-      $.import_statement 
+      repeat($.import_statement)
     ),
 
     package_declaration: $ => seq(
@@ -32,19 +41,16 @@ module.exports = grammar({
 
     import_statement: $ => seq(
       'import',
-      choice($.qualified_identifier, $.wildcard_import),
+      $.qualified_identifier,
       ';'
     ),
-
-    wildcard_import: $ => seq($.qualified_identifier, '.' , '*'),
 
     qualified_identifier: $ => prec.right(seq($.identifier, repeat(seq('.', $.identifier)))),
 
     statement: $ => choice(
       $.function_declaration,
-      $.class_declaration,
-      $.expression_statement,
-      $.variable_declaration
+      $.variable_declaration,
+      $.expression_statement
     ),
 
     function_declaration: $ => seq(
@@ -54,42 +60,71 @@ module.exports = grammar({
       $.block
     ),
 
-    class_declaration: $ => seq(
-      'class',
-      $.identifier,
-      $.block
+    parameter_list: $ => seq(
+      '(',
+      optional(commaSep($.identifier)),
+      ')'
     ),
-
-    parameter_list: $ => seq('(', optional(commaSep($.identifier)), ')'),
 
     block: $ => seq('{', repeat($.statement), '}'),
 
-    expression_statement: $ => seq($.expression, ';'),
+    variable_declaration: $ => seq(
+      'var',
+      $.variable_declarator_list
+    ),
+
+    variable_declarator_list: $ => commaSep1($.variable_declarator),
+
+    variable_declarator: $ => seq(
+      $.identifier,
+      optional(seq('=', $.variable_initializer))
+    ),
+
+    variable_initializer: $ => choice(
+      $.expression,
+      $.array_initializer
+    ),
+
+    array_initializer: $ => seq(
+      '{',
+      optional(commaSep($.expression)),
+      '}'
+    ),
+
+    expression_statement: $ => seq(
+      $.expression,
+      optional(';')
+    ),
 
     expression: $ => choice(
+      $.number_literal,
       $.function_call,
       $.binary_expression,
       $.identifier,
       $.string
     ),
 
-    binary_expression: $ => prec.left(PREC.EXPRESSION, seq( 
+    number_literal: $ => choice(
+      DIGITS,
+      seq('0x', HEX_DIGITS),
+    ),
+
+    binary_expression: $ => prec.left(PREC.EXPRESSION, seq(
       $.expression,
       choice('+', '-', '*', '/', '%'),
       $.expression
     )),
 
-    variable_declaration: $ => seq(
-      'var ',
+    function_call: $ => seq(
       $.identifier,
-      '=',
-      $.expression,
-      ';'
-    ),    
+      $.argument_list
+    ),
 
-    function_call: $ => seq($.identifier, $.argument_list),
-
-    argument_list: $ => seq('(', optional(commaSep($.expression)), ')'),
+    argument_list: $ => seq(
+      '(',
+      optional(commaSep($.expression)),
+      ')'
+    ),
 
     identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
 
@@ -97,14 +132,8 @@ module.exports = grammar({
 
     line_comment: _ => token(prec(PREC.COMMENT, seq('//', /[^\n]*/))),
 
-    block_comment: _ => token(prec(PREC.COMMENT,
-      seq(
-        '/*',
-        /[^*]*\*+([^/*][^*]*\*+)*/,
-        '/'
-      ),
-    )),
-  },
+    block_comment: _ => token(prec(PREC.COMMENT, seq('/*', /[^*]*\*+([^/*][^*]*\*+)*/, '/')))
+  }
 });
 
 /**

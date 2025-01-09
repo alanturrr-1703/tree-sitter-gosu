@@ -15,6 +15,21 @@
     }
   },
   {
+    "type": "array_initializer",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "binary_expression",
     "named": true,
     "fields": {},
@@ -45,25 +60,6 @@
     }
   },
   {
-    "type": "class_declaration",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "block",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "expression",
     "named": true,
     "fields": {},
@@ -81,6 +77,10 @@
         },
         {
           "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "number_literal",
           "named": true
         },
         {
@@ -177,13 +177,14 @@
         {
           "type": "qualified_identifier",
           "named": true
-        },
-        {
-          "type": "wildcard_import",
-          "named": true
         }
       ]
     }
+  },
+  {
+    "type": "number_literal",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "package_declaration",
@@ -237,18 +238,10 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
-          "type": "block_comment",
-          "named": true
-        },
-        {
           "type": "header",
-          "named": true
-        },
-        {
-          "type": "line_comment",
           "named": true
         },
         {
@@ -266,10 +259,6 @@
       "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "class_declaration",
-          "named": true
-        },
         {
           "type": "expression_statement",
           "named": true
@@ -290,22 +279,52 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
-          "type": "expression",
-          "named": true
-        },
-        {
-          "type": "identifier",
+          "type": "variable_declarator_list",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "wildcard_import",
+    "type": "variable_declarator",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "variable_initializer",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "variable_declarator_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "variable_declarator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "variable_initializer",
     "named": true,
     "fields": {},
     "children": {
@@ -313,15 +332,15 @@
       "required": true,
       "types": [
         {
-          "type": "qualified_identifier",
+          "type": "array_initializer",
+          "named": true
+        },
+        {
+          "type": "expression",
           "named": true
         }
       ]
     }
-  },
-  {
-    "type": "\n",
-    "named": false
   },
   {
     "type": "%",
@@ -360,6 +379,10 @@
     "named": false
   },
   {
+    "type": "0x",
+    "named": false
+  },
+  {
     "type": ";",
     "named": false
   },
@@ -370,10 +393,6 @@
   {
     "type": "block_comment",
     "named": true
-  },
-  {
-    "type": "class",
-    "named": false
   },
   {
     "type": "function",
@@ -400,7 +419,7 @@
     "named": true
   },
   {
-    "type": "var ",
+    "type": "var",
     "named": false
   },
   {
