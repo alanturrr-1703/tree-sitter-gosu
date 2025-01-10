@@ -16,29 +16,32 @@ module.exports = grammar({
     $.block_comment,
     /\s/,
   ],
+  
+  
 
   rules: {
     source_file: $ => seq(
-      repeat($.header),
+      optional(repeat($.header)),
       repeat($.statement)
     ),
 
-    header: $ => seq(
-      $.package_declaration,
-      repeat($.uses_statement)
-    ),
-
+    header: $ => prec.left(seq(
+      choice($.package_declaration, $.uses_statement),
+      repeat(choice($.package_declaration, $.uses_statement))
+    )),
+    
     package_declaration: $ => seq(
       'package',
       $.qualified_identifier,
-      ';'
+      optional(';') // Semicolon is optional
     ),
-
+    
     uses_statement: $ => seq(
       'uses',
       $.qualified_identifier,
-      ';'
+      optional(';') // Semicolon is optional
     ),
+    
 
     // Literals
 
@@ -248,7 +251,7 @@ module.exports = grammar({
       ')'
     ),
 
-    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+    identifier: $ => /[a-zA-Z_*][a-zA-Z0-9_*]*/,
 
     string: $ => /"([^"\\]|\\.)*"/,
 
