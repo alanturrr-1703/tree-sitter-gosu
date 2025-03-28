@@ -1098,19 +1098,7 @@
       "required": false,
       "types": [
         {
-          "type": "annotation_type_declaration",
-          "named": true
-        },
-        {
-          "type": "block",
-          "named": true
-        },
-        {
           "type": "class_declaration",
-          "named": true
-        },
-        {
-          "type": "compact_constructor_declaration",
           "named": true
         },
         {
@@ -1131,10 +1119,6 @@
         },
         {
           "type": "method_declaration",
-          "named": true
-        },
-        {
-          "type": "record_declaration",
           "named": true
         },
         {
@@ -1236,42 +1220,6 @@
     }
   },
   {
-    "type": "compact_constructor_declaration",
-    "named": true,
-    "fields": {
-      "body": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "block",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "modifiers",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "constant_declaration",
     "named": true,
     "fields": {
@@ -1316,10 +1264,6 @@
       "required": false,
       "types": [
         {
-          "type": "explicit_constructor_invocation",
-          "named": true
-        },
-        {
           "type": "statement",
           "named": true
         }
@@ -1339,48 +1283,14 @@
             "named": true
           }
         ]
-      },
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "parameters": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "formal_parameters",
-            "named": true
-          }
-        ]
-      },
-      "type_parameters": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "type_parameters",
-            "named": true
-          }
-        ]
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
         {
-          "type": "modifiers",
-          "named": true
-        },
-        {
-          "type": "throws",
+          "type": "formal_parameters",
           "named": true
         }
       ]
@@ -1632,19 +1542,7 @@
       "required": false,
       "types": [
         {
-          "type": "annotation_type_declaration",
-          "named": true
-        },
-        {
-          "type": "block",
-          "named": true
-        },
-        {
           "type": "class_declaration",
-          "named": true
-        },
-        {
-          "type": "compact_constructor_declaration",
           "named": true
         },
         {
@@ -1665,10 +1563,6 @@
         },
         {
           "type": "method_declaration",
-          "named": true
-        },
-        {
-          "type": "record_declaration",
           "named": true
         },
         {
@@ -1768,56 +1662,6 @@
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "explicit_constructor_invocation",
-    "named": true,
-    "fields": {
-      "arguments": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "argument_list",
-            "named": true
-          }
-        ]
-      },
-      "constructor": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "super",
-            "named": true
-          },
-          {
-            "type": "this",
-            "named": true
-          }
-        ]
-      },
-      "object": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "primary_expression",
-            "named": true
-          }
-        ]
-      },
-      "type_arguments": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "type_arguments",
-            "named": true
-          }
-        ]
-      }
     }
   },
   {
@@ -4308,6 +4152,10 @@
   },
   {
     "type": "class",
+    "named": false
+  },
+  {
+    "type": "construct",
     "named": false
   },
   {

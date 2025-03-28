@@ -49,20 +49,13 @@ class SQLInjectionExample1 {
         return query
     }
 	
-	function createInsertQuery(userData: Map<String, String>): String {
-		// Construct the INSERT query using the map values
-		var name = userData.get("name")
-		var age = userData.get("age")
-		var city = userData.get("city")
-		var email = userData.get("email")
+	function createInsertQuery(name : String): String {
 
-		var query = "INSERT INTO users (name, age, city, email) VALUES ('" + name + "', " + age + ", '" + city + "', '" + email + "')"
-		return query
+		// Construct the INSERT query using the map values
+		var name = name
+		
+		return name
 	}
 	
-	function createSelectQuery(username2: String): String {
-		// Construct the SELECT query using the input parameter
-		var query = "SELECT * FROM users WHERE username = '" + username2 + "'"
-		return query
-	}
+
 }

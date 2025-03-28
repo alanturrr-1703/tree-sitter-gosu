@@ -946,14 +946,10 @@ module.exports = grammar({
 
     _class_body_declaration: $ => choice(
       $.field_declaration,
-      $.record_declaration,
       $.method_declaration,
-      $.compact_constructor_declaration, // For records.
       $.class_declaration,
       $.interface_declaration,
-      $.annotation_type_declaration,
       $.enum_declaration,
-      $.block,
       $.static_initializer,
       $.constructor_declaration,
       ';',
@@ -965,24 +961,17 @@ module.exports = grammar({
     ),
 
     constructor_declaration: $ => seq(
-      optional($.modifiers),
-      $._constructor_declarator,
-      optional($.throws),
+      'construct',
+      optional($.formal_parameters),
       field('body', $.constructor_body),
-    ),
-
-    _constructor_declarator: $ => seq(
-      field('type_parameters', optional($.type_parameters)),
-      field('name', $.identifier),
-      field('parameters', $.formal_parameters),
     ),
 
     constructor_body: $ => seq(
       '{',
-      optional($.explicit_constructor_invocation),
       repeat($.statement),
       '}',
     ),
+
 
     explicit_constructor_invocation: $ => seq(
       choice(
