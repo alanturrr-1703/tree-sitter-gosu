@@ -25,10 +25,11 @@ const PREC = {
   CAST: 14,           // (Type)
   OBJ_INST: 14,       // new
   UNARY: 15,          // ++a  --a  a++  a--  +  -  !  ~
-  ARRAY: 16,          // [Index]
-  OBJ_ACCESS: 16,     // .
-  PARENS: 16,         // (Expression)
-  CLASS_LITERAL: 17,  // .
+  POSTFIX: 16,
+  ARRAY: 17,          // [Index]
+  OBJ_ACCESS: 17,     // .
+  PARENS: 17,         // (Expression)
+  CLASS_LITERAL: 18,  // .
 };
 
 /* eslint-enable no-multi-spaces */
@@ -228,18 +229,15 @@ module.exports = grammar({
       $.switch_expression,
     ),
 
-    cast_expression: $ => prec(PREC.CAST, choice(
+    cast_expression: $ => prec.right(PREC.CAST, choice(
       seq(
-        '(',
-        field('type', $._type),
-        ')',
-        field('value', $.expression),
+        '(', field('type', $._type), ')', field('value', $.expression),
       ),
       seq(
-        '(',
-        sep1(field('type', $._type), '&'),
-        ')',
-        field('value', choice($.primary_expression, $.lambda_expression)),
+        field('value', $.expression), 'as', field('type', $._type),
+      ),
+      seq(
+        '(', sep1(field('type', $._type), '&'), ')', field('value', choice($.primary_expression, $.lambda_expression)),
       ),
     )),
 
@@ -262,7 +260,9 @@ module.exports = grammar({
         ['<=', PREC.REL],
         ['==', PREC.EQUALITY],
         ['!=', PREC.EQUALITY],
+        ['and', PREC.AND],
         ['&&', PREC.AND],
+        ['or', PREC.OR],
         ['||', PREC.OR],
         ['+', PREC.ADD],
         ['-', PREC.ADD],
@@ -319,25 +319,35 @@ module.exports = grammar({
       field('alternative', $.expression),
     )),
 
-    unary_expression: $ => choice(...[
-      ['+', PREC.UNARY],
-      ['-', PREC.UNARY],
-      ['!', PREC.UNARY],
-      ['~', PREC.UNARY],
-    ].map(([operator, precedence]) =>
-      prec.left(precedence, seq(
-        // @ts-ignore
-        field('operator', operator),
+    unary_expression: $ => choice(
+      ...[
+        ['+', PREC.UNARY],
+        ['-', PREC.UNARY],
+        ['!', PREC.UNARY],
+        ['~', PREC.UNARY],
+      ].map(([operator, precedence]) =>
+        prec.left(precedence, seq(
+          field('operator', operator),
+          field('operand', $.expression),
+        )),
+      ),
+      $.postfix_update_expression
+    ),
+
+    postfix_update_expression: $ =>
+      prec.left(PREC.POSTFIX, seq(
         field('operand', $.expression),
+        field('operator', choice(
+          token('++'),
+          token('--')
+        ))
       )),
-    )),
+        
 
     update_expression: $ => prec.left(PREC.UNARY, choice(
       // Post (in|de)crement is evaluated before pre (in|de)crement
       seq($.expression, '++'),
       seq($.expression, '--'),
-      seq('++', $.expression),
-      seq('--', $.expression),
     )),
 
     primary_expression: $ => choice(
@@ -686,7 +696,7 @@ module.exports = grammar({
       optional($.modifiers),
       field('type', $._unannotated_type),
       $._variable_declarator_id,
-      ':',
+      'in',
       field('value', $.expression),
       ')',
       field('body', $.statement),
@@ -843,7 +853,7 @@ module.exports = grammar({
       'uses',
       optional('static'),
       $._name,
-      optional(seq('.', $.asterisk)),
+      optional(seq('.', $.asterisk)), 
       $._semicolon,
     ),	
 

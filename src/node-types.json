@@ -927,6 +927,14 @@
             "named": false
           },
           {
+            "type": "and",
+            "named": false
+          },
+          {
+            "type": "or",
+            "named": false
+          },
+          {
             "type": "|",
             "named": false
           },
@@ -2324,16 +2332,6 @@
           }
         ]
       },
-      "type": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_unannotated_type",
-            "named": true
-          }
-        ]
-      },
       "type_parameters": {
         "multiple": false,
         "required": false,
@@ -2359,6 +2357,10 @@
         },
         {
           "type": "modifiers",
+          "named": true
+        },
+        {
+          "type": "return_type",
           "named": true
         },
         {
@@ -2704,6 +2706,36 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "postfix_update_expression",
+    "named": true,
+    "fields": {
+      "operand": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "++",
+            "named": false
+          },
+          {
+            "type": "--",
+            "named": false
+          }
+        ]
+      }
     }
   },
   {
@@ -3067,6 +3099,22 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "return_type",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_unannotated_type",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -3712,7 +3760,7 @@
     "fields": {
       "operand": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "expression",
@@ -3722,7 +3770,7 @@
       },
       "operator": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "!",
@@ -3742,6 +3790,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "postfix_update_expression",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -4111,6 +4169,14 @@
     "named": false
   },
   {
+    "type": "and",
+    "named": false
+  },
+  {
+    "type": "as",
+    "named": false
+  },
+  {
     "type": "assert",
     "named": false
   },
@@ -4251,6 +4317,10 @@
     "named": false
   },
   {
+    "type": "in",
+    "named": false
+  },
+  {
     "type": "int",
     "named": false
   },
@@ -4296,6 +4366,10 @@
   },
   {
     "type": "opens",
+    "named": false
+  },
+  {
+    "type": "or",
     "named": false
   },
   {
